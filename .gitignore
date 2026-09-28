@@ -1,0 +1,53 @@
+# Built application files
+*.apk
+*.aab
+*.aar
+*.ap_
+*.dex
+
+# Java / Kotlin class files
+*.class
+
+# Generated build directories
+/bin/
+/gen/
+/out/
+.gradle/
+build/
+/*/build/
+/*/*/build/
+
+# Local configuration files (SDK paths, local properties)
+local.properties
+
+# Log files
+*.log
+
+# Android Studio & IntelliJ IDEA files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Android Native / NDK
+.externalNativeBuild/
+.cxx/
+
+# Profiling & Captures
+/captures/
+*.hprof
+
+# Keystores & Signing files
+*.keystore
+*.jks
+*.pepk
+
+# OS / System generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE Artifacts & Temp files
+.artifacts/
