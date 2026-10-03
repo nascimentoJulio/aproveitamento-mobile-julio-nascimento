@@ -11,9 +11,14 @@ import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import br.edu.com.ifsul.taskorganizer.MainActivity;
 import br.edu.com.ifsul.taskorganizer.model.Task;
@@ -49,12 +54,21 @@ public class NotificationHelper {
         }
     }
 
+    private static int generatePositiveNotificationId(Task task) {
+        if (task.getId() > 0) {
+            return task.getId();
+        }
+        long time = System.currentTimeMillis();
+        int id = (int) (time & 0x7FFFFFFF);
+        return id > 0 ? id : 1001;
+    }
+
     @SuppressLint("MissingPermission")
     public static void showNotificationNow(Context context, Task task) {
         createNotificationChannel(context);
 
         Intent openIntent = new Intent(context, MainActivity.class);
-        int notificationId = task.getId() != 0 ? task.getId() : (int) System.currentTimeMillis();
+        int notificationId = generatePositiveNotificationId(task);
 
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context,
@@ -94,7 +108,7 @@ public class NotificationHelper {
         long triggerTime = task.getDueDate();
         long now = System.currentTimeMillis();
 
-        if (triggerTime <= now + 10000) {
+        if (triggerTime <= now + 5000) {
             showNotificationNow(context, task);
             return;
         }
@@ -102,10 +116,7 @@ public class NotificationHelper {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager == null) return;
 
-        int requestCode = task.getId() != 0 ? task.getId() : (int) (task.getDueDate() % 100000);
-        if (requestCode == 0) {
-            requestCode = (int) System.currentTimeMillis();
-        }
+        int requestCode = generatePositiveNotificationId(task);
 
         Intent intent = new Intent(context, TaskNotificationReceiver.class);
         intent.putExtra("EXTRA_TASK_ID", requestCode);
@@ -120,19 +131,21 @@ public class NotificationHelper {
         );
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                if (alarmManager.canScheduleExactAlarms()) {
+            AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(triggerTime, pendingIntent);
+            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+            Toast.makeText(context, "Reminder scheduled for " + sdf.format(new Date(triggerTime)), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
                 } else {
-                    alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
                 }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
-            } else {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
+            } catch (Exception ex) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
             }
-        } catch (SecurityException e) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent);
         }
     }
 

@@ -4,7 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -29,24 +29,41 @@ import br.edu.com.ifsul.taskorganizer.model.Category;
 import br.edu.com.ifsul.taskorganizer.model.Priority;
 import br.edu.com.ifsul.taskorganizer.model.Task;
 import br.edu.com.ifsul.taskorganizer.notification.NotificationHelper;
+import br.edu.com.ifsul.taskorganizer.saripaar.ValidationError;
+import br.edu.com.ifsul.taskorganizer.saripaar.Validator;
+import br.edu.com.ifsul.taskorganizer.saripaar.annotation.Length;
+import br.edu.com.ifsul.taskorganizer.saripaar.annotation.NotEmpty;
+import br.edu.com.ifsul.taskorganizer.saripaar.annotation.Select;
 import br.edu.com.ifsul.taskorganizer.viewmodel.TaskViewModel;
 
-public class AddEditTaskActivity extends AppCompatActivity {
+public class AddEditTaskActivity extends AppCompatActivity implements Validator.ValidationListener {
 
     public static final String EXTRA_TASK_ID = "EXTRA_TASK_ID";
 
     private TextInputLayout tilTitle;
     private TextInputLayout tilDescription;
+
+    @NotEmpty(message = "Title is required")
+    @Length(min = 3, max = 50, message = "Title must be between 3 and 50 characters")
     private EditText etTitle;
+
+    @Length(max = 200, message = "Description cannot exceed 200 characters")
     private EditText etDescription;
+
     private Button btnSelectDateTime;
+
+    @Select(defaultSelection = 0, message = "Please select a valid priority")
     private Spinner spinnerPriority;
+
+    @Select(defaultSelection = 0, message = "Please select a valid category")
     private Spinner spinnerCategory;
+
     private CheckBox cbRemind;
     private CheckBox cbFinished;
     private Button btnSave;
 
     private TaskViewModel taskViewModel;
+    private Validator validator;
 
     private final Calendar calendar = Calendar.getInstance();
     private final SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
@@ -70,10 +87,10 @@ public class AddEditTaskActivity extends AppCompatActivity {
 
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
-        setupSpinners();
-        updateDateTimeButtonText();
+        validator = new Validator(this);
+        validator.setValidationListener(this);
 
-        btnSelectDateTime.setOnClickListener(v -> showDateTimePicker());
+        setupSpinners();
 
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_TASK_ID)) {
@@ -85,12 +102,20 @@ public class AddEditTaskActivity extends AppCompatActivity {
                 loadTaskDetails(currentTaskId);
             }
         } else {
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.add(Calendar.MINUTE, 5);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setTitle("Add Task");
             }
         }
 
-        btnSave.setOnClickListener(v -> saveTask());
+        updateDateTimeButtonText();
+
+        btnSelectDateTime.setOnClickListener(v -> showDateTimePicker());
+
+        btnSave.setOnClickListener(v -> validator.validate());
     }
 
     private void setupSpinners() {
@@ -128,31 +153,49 @@ public class AddEditTaskActivity extends AppCompatActivity {
     }
 
     private void showDateTimePicker() {
+        int startYear = calendar.get(Calendar.YEAR);
+        int startMonth = calendar.get(Calendar.MONTH);
+        int startDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int startHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int startMinute = calendar.get(Calendar.MINUTE);
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, year, month, dayOfMonth) -> {
-                    calendar.set(Calendar.YEAR, year);
-                    calendar.set(Calendar.MONTH, month);
-                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
                     TimePickerDialog timePickerDialog = new TimePickerDialog(
                             AddEditTaskActivity.this,
                             (timeView, hourOfDay, minute) -> {
-                                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                calendar.set(Calendar.MINUTE, minute);
-                                calendar.set(Calendar.SECOND, 0);
+                                calendar.set(year, month, dayOfMonth, hourOfDay, minute, 0);
+                                calendar.set(Calendar.MILLISECOND, 0);
+
+                                Calendar nowCal = Calendar.getInstance();
+                                if (year == nowCal.get(Calendar.YEAR) &&
+                                    month == nowCal.get(Calendar.MONTH) &&
+                                    dayOfMonth == nowCal.get(Calendar.DAY_OF_MONTH)) {
+
+                                    if (calendar.getTimeInMillis() < nowCal.getTimeInMillis() - 30000) {
+                                        calendar.add(Calendar.DAY_OF_MONTH, 1);
+                                        Toast.makeText(this, "Selected time has passed today. Set for tomorrow " + dateTimeFormat.format(calendar.getTime()), Toast.LENGTH_LONG).show();
+                                    }
+                                }
+
                                 updateDateTimeButtonText();
                             },
-                            calendar.get(Calendar.HOUR_OF_DAY),
-                            calendar.get(Calendar.MINUTE),
+                            startHour,
+                            startMinute,
                             true
                     );
                     timePickerDialog.show();
                 },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
+                startYear,
+                startMonth,
+                startDay
         );
+
+        if (currentTaskId == -1) {
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+        }
+
         datePickerDialog.show();
     }
 
@@ -177,56 +220,23 @@ public class AddEditTaskActivity extends AppCompatActivity {
         });
     }
 
-    private void saveTask() {
-        boolean isValid = true;
-
-        String title = etTitle.getText() != null ? etTitle.getText().toString().trim() : "";
-        if (TextUtils.isEmpty(title)) {
-            tilTitle.setError("Title is required");
-            isValid = false;
-        } else if (title.length() < 3) {
-            tilTitle.setError("Title must be at least 3 characters");
-            isValid = false;
-        } else if (title.length() > 50) {
-            tilTitle.setError("Title cannot exceed 50 characters");
-            isValid = false;
-        } else {
-            tilTitle.setError(null);
-        }
-
-        String description = etDescription.getText() != null ? etDescription.getText().toString().trim() : "";
-        if (description.length() > 200) {
-            tilDescription.setError("Description cannot exceed 200 characters");
-            isValid = false;
-        } else {
-            tilDescription.setError(null);
-        }
+    @Override
+    public void onValidationSucceeded() {
+        tilTitle.setError(null);
+        tilDescription.setError(null);
 
         long dueDate = calendar.getTimeInMillis();
         long now = System.currentTimeMillis();
-        if (currentTaskId == -1 && dueDate < now ) {
-            Toast.makeText(this, "Due date cannot be prior to current date and time", Toast.LENGTH_LONG).show();
-            isValid = false;
-        }
 
-        int priorityPos = spinnerPriority.getSelectedItemPosition();
-        if (priorityPos <= 0) {
-            Toast.makeText(this, "Please select a valid priority", Toast.LENGTH_SHORT).show();
-            isValid = false;
-        }
-
-        int categoryPos = spinnerCategory.getSelectedItemPosition();
-        if (categoryPos <= 0) {
-            Toast.makeText(this, "Please select a valid category", Toast.LENGTH_SHORT).show();
-            isValid = false;
-        }
-
-        if (!isValid) {
+        if (currentTaskId == -1 && dueDate < now - 60000) {
+            Toast.makeText(this, "Due date must be in the future. Please select a valid date and time.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        Priority priority = Priority.values()[priorityPos - 1];
-        Category category = Category.values()[categoryPos - 1];
+        String title = etTitle.getText().toString().trim();
+        String description = etDescription.getText() != null ? etDescription.getText().toString().trim() : "";
+        Priority priority = Priority.values()[spinnerPriority.getSelectedItemPosition() - 1];
+        Category category = Category.values()[spinnerCategory.getSelectedItemPosition() - 1];
         boolean remind = cbRemind.isChecked();
         boolean finished = cbFinished.isChecked();
 
@@ -255,5 +265,26 @@ public class AddEditTaskActivity extends AppCompatActivity {
         }
 
         finish();
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        tilTitle.setError(null);
+        tilDescription.setError(null);
+
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage();
+
+            if (view == etTitle) {
+                tilTitle.setError(message);
+            } else if (view == etDescription) {
+                tilDescription.setError(message);
+            } else if (view instanceof Spinner) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

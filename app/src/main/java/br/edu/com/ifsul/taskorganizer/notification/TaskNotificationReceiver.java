@@ -22,7 +22,7 @@ public class TaskNotificationReceiver extends BroadcastReceiver {
         String description = intent.getStringExtra("EXTRA_TASK_DESCRIPTION");
 
         Intent openIntent = new Intent(context, MainActivity.class);
-        int notificationId = taskId != -1 ? taskId : (int) System.currentTimeMillis();
+        int notificationId = taskId > 0 ? taskId : Math.abs((int) System.currentTimeMillis());
 
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context,
