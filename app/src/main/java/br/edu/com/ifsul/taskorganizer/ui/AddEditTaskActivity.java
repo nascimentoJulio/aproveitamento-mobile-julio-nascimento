@@ -96,9 +96,6 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
         if (intent != null && intent.hasExtra(EXTRA_TASK_ID)) {
             currentTaskId = intent.getIntExtra(EXTRA_TASK_ID, -1);
             if (currentTaskId != -1) {
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setTitle(getString(R.string.edit_task));
-                }
                 loadTaskDetails(currentTaskId);
             }
         } else {
@@ -106,9 +103,6 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
             calendar.add(Calendar.MINUTE, 5);
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(getString(R.string.add_task));
-            }
         }
 
         updateDateTimeButtonText();
