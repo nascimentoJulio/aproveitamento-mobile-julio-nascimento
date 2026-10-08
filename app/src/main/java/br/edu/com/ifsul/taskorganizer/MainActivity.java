@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     private void requestNotificationPermission() {
         if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
-            Toast.makeText(this, "Please enable notifications for Task Organizer in system settings", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.enable_notifications_prompt), Toast.LENGTH_LONG).show();
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -81,9 +81,9 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == NOTIFICATION_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.notification_permission_granted), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Notifications are disabled. You won't receive task reminders.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.notifications_disabled_warning), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     public void onTaskDeleteClick(Task task) {
         NotificationHelper.cancelNotification(this, task.getId());
         taskViewModel.delete(task);
-        Toast.makeText(this, "Task deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.task_deleted), Toast.LENGTH_SHORT).show();
     }
 
     @Override

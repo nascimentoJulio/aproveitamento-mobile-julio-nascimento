@@ -16,7 +16,7 @@
             android:id="@+id/tilTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Title *"
+            android:hint="@string/title_hint"
             app:counterEnabled="true"
             app:counterMaxLength="50"
             app:errorEnabled="true">
@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="Description (optional)"
+            android:hint="@string/description_hint"
             app:counterEnabled="true"
             app:counterMaxLength="200"
             app:errorEnabled="true">
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Due Date &amp; Time *"
+            android:text="@string/due_date_label"
             android:textStyle="bold" />
 
         <Button
@@ -63,13 +63,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Select Date &amp; Time" />
+            android:text="@string/select_date_time" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Priority *"
+            android:text="@string/priority_label"
             android:textStyle="bold" />
 
         <Spinner
@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Category *"
+            android:text="@string/category_label"
             android:textStyle="bold" />
 
         <Spinner
@@ -98,21 +98,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Remind me" />
+            android:text="@string/remind_me" />
 
         <CheckBox
             android:id="@+id/cbFinished"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Mark as finished" />
+            android:text="@string/mark_as_finished" />
 
         <Button
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Save Task" />
+            android:text="@string/save_task" />
 
     </LinearLayout>
 

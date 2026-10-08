@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import br.edu.com.ifsul.taskorganizer.MainActivity;
+import br.edu.com.ifsul.taskorganizer.R;
 import br.edu.com.ifsul.taskorganizer.model.Task;
 
 public class NotificationHelper {
@@ -77,8 +78,8 @@ public class NotificationHelper {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        String title = task.getTitle() != null && !task.getTitle().trim().isEmpty() ? task.getTitle() : "Task Reminder";
-        String description = task.getDescription() != null && !task.getDescription().trim().isEmpty() ? task.getDescription() : "It's time for your task!";
+        String title = task.getTitle() != null && !task.getTitle().trim().isEmpty() ? task.getTitle() : context.getString(R.string.task_reminder_title);
+        String description = task.getDescription() != null && !task.getDescription().trim().isEmpty() ? task.getDescription() : context.getString(R.string.task_reminder_default_text);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
@@ -135,7 +136,7 @@ public class NotificationHelper {
             alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
-            Toast.makeText(context, "Reminder scheduled for " + sdf.format(new Date(triggerTime)), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, context.getString(R.string.reminder_scheduled_format, sdf.format(new Date(triggerTime))), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

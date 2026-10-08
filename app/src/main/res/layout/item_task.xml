@@ -38,7 +38,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Delete Task"
+                android:contentDescription="@string/delete_task"
                 android:src="@android:drawable/ic_menu_delete" />
 
         </LinearLayout>

@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="32dp"
-            android:text="No tasks available. Tap + to add a task!"
+            android:text="@string/empty_state_tasks"
             android:textSize="16sp"
             android:visibility="gone" />
 
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="Add Task"
+        android:contentDescription="@string/add_task"
         app:srcCompat="@android:drawable/ic_input_add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

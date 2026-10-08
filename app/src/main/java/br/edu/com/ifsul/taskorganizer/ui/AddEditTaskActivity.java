@@ -97,7 +97,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
             currentTaskId = intent.getIntExtra(EXTRA_TASK_ID, -1);
             if (currentTaskId != -1) {
                 if (getSupportActionBar() != null) {
-                    getSupportActionBar().setTitle("Edit Task");
+                    getSupportActionBar().setTitle(getString(R.string.edit_task));
                 }
                 loadTaskDetails(currentTaskId);
             }
@@ -107,7 +107,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
             if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle("Add Task");
+                getSupportActionBar().setTitle(getString(R.string.add_task));
             }
         }
 
@@ -120,9 +120,9 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
 
     private void setupSpinners() {
         List<String> priorityList = new ArrayList<>();
-        priorityList.add("-- Select Priority --");
+        priorityList.add(getString(R.string.select_priority));
         for (Priority p : Priority.values()) {
-            priorityList.add(p.getDisplayName());
+            priorityList.add(getString(p.getDisplayNameResId()));
         }
 
         ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(
@@ -134,9 +134,9 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
         spinnerPriority.setAdapter(priorityAdapter);
 
         List<String> categoryList = new ArrayList<>();
-        categoryList.add("-- Select Category --");
+        categoryList.add(getString(R.string.select_category));
         for (Category c : Category.values()) {
-            categoryList.add(c.getDisplayName());
+            categoryList.add(getString(c.getDisplayNameResId()));
         }
 
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
@@ -175,7 +175,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
 
                                     if (calendar.getTimeInMillis() < nowCal.getTimeInMillis() - 30000) {
                                         calendar.add(Calendar.DAY_OF_MONTH, 1);
-                                        Toast.makeText(this, "Selected time has passed today. Set for tomorrow " + dateTimeFormat.format(calendar.getTime()), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(this, getString(R.string.time_passed_adjusted, dateTimeFormat.format(calendar.getTime())), Toast.LENGTH_LONG).show();
                                     }
                                 }
 
@@ -229,7 +229,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
         long now = System.currentTimeMillis();
 
         if (currentTaskId == -1 && dueDate < now - 60000) {
-            Toast.makeText(this, "Due date must be in the future. Please select a valid date and time.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_due_date_past), Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -242,7 +242,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
 
         if (remind) {
             if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
-                Toast.makeText(this, "Notifications are disabled in system settings for this app!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.notifications_disabled_settings), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -252,7 +252,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
             if (remind) {
                 NotificationHelper.scheduleNotification(this, newTask);
             }
-            Toast.makeText(this, "Task created", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.task_created), Toast.LENGTH_SHORT).show();
         } else {
             Task updatedTask = new Task(currentTaskId, title, description, dueDate, priority, category, finished, remind);
             taskViewModel.update(updatedTask);
@@ -261,7 +261,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
             } else {
                 NotificationHelper.cancelNotification(this, currentTaskId);
             }
-            Toast.makeText(this, "Task updated", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.task_updated), Toast.LENGTH_SHORT).show();
         }
 
         finish();

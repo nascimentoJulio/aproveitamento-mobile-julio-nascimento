@@ -1,3 +1,62 @@
 <resources>
     <string name="app_name">Task Organizer</string>
+    <string name="empty_state_tasks">No tasks available. Tap + to add a task!</string>
+    <string name="add_task">Add Task</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="delete_task">Delete Task</string>
+
+    <!-- Form Labels and Hints -->
+    <string name="title_hint">Title *</string>
+    <string name="description_hint">Description (optional)</string>
+    <string name="due_date_label">Due Date &amp; Time *</string>
+    <string name="select_date_time">Select Date &amp; Time</string>
+    <string name="priority_label">Priority *</string>
+    <string name="category_label">Category *</string>
+    <string name="remind_me">Remind me</string>
+    <string name="mark_as_finished">Mark as finished</string>
+    <string name="save_task">Save Task</string>
+
+    <!-- Spinners default options -->
+    <string name="select_priority">-- Select Priority --</string>
+    <string name="select_category">-- Select Category --</string>
+
+    <!-- Priority Display Names -->
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
+
+    <!-- Category Display Names -->
+    <string name="category_studies">Studies</string>
+    <string name="category_work">Work</string>
+    <string name="category_personal">Personal</string>
+    <string name="category_other">Other</string>
+
+    <!-- Task Item Display Formats -->
+    <string name="remind_set">⏰ Remind set</string>
+    <string name="due_format">Due: %1$s</string>
+    <string name="priority_format">Priority: %1$s</string>
+    <string name="category_format">Category: %1$s</string>
+
+    <!-- Toast Messages -->
+    <string name="task_created">Task created</string>
+    <string name="task_updated">Task updated</string>
+    <string name="task_deleted">Task deleted</string>
+
+    <!-- Validation Error Messages -->
+    <string name="error_title_required">Title is required</string>
+    <string name="error_title_length">Title must be between 3 and 50 characters</string>
+    <string name="error_description_length">Description cannot exceed 200 characters</string>
+    <string name="error_select_priority">Please select a valid priority</string>
+    <string name="error_select_category">Please select a valid category</string>
+    <string name="error_due_date_past">Due date must be in the future. Please select a valid date and time.</string>
+    <string name="time_passed_adjusted">Selected time has passed today. Set for tomorrow %1$s</string>
+    <string name="reminder_scheduled_format">Reminder scheduled for %1$s</string>
+
+    <!-- Notification Messages -->
+    <string name="task_reminder_title">Task Reminder</string>
+    <string name="task_reminder_default_text">It\'s time for your task!</string>
+    <string name="notifications_disabled_settings">Notifications are disabled in system settings for this app!</string>
+    <string name="notifications_disabled_warning">Notifications are disabled. You won\'t receive task reminders.</string>
+    <string name="notification_permission_granted">Notification permission granted</string>
+    <string name="enable_notifications_prompt">Please enable notifications for Task Organizer in system settings</string>
 </resources>

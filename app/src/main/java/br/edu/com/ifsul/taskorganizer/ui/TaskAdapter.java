@@ -1,5 +1,6 @@
 package br.edu.com.ifsul.taskorganizer.ui;
 
+import android.content.Context;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +84,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
 
         public void bind(Task task) {
+            Context context = itemView.getContext();
             tvTitle.setText(task.getTitle());
 
             if (task.getDescription() != null && !task.getDescription().trim().isEmpty()) {
@@ -92,19 +94,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 tvDescription.setVisibility(View.GONE);
             }
 
-            tvDueDate.setText("Due: " + dateFormat.format(new Date(task.getDueDate())));
+            tvDueDate.setText(context.getString(R.string.due_format, dateFormat.format(new Date(task.getDueDate()))));
 
             if (task.getPriority() != null) {
-                tvPriority.setText("Priority: " + task.getPriority().getDisplayName());
+                tvPriority.setText(context.getString(R.string.priority_format, context.getString(task.getPriority().getDisplayNameResId())));
             }
 
             if (task.getCategory() != null) {
-                tvCategory.setText("Category: " + task.getCategory().getDisplayName());
+                tvCategory.setText(context.getString(R.string.category_format, context.getString(task.getCategory().getDisplayNameResId())));
             }
 
             if (task.isRemind()) {
                 tvRemind.setVisibility(View.VISIBLE);
-                tvRemind.setText("⏰ Remind set");
+                tvRemind.setText(R.string.remind_set);
             } else {
                 tvRemind.setVisibility(View.GONE);
             }
