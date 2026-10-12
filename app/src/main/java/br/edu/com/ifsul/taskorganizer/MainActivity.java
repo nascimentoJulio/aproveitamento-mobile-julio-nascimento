@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.ViewModelProvider;
@@ -97,9 +98,16 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     @Override
     public void onTaskDeleteClick(Task task) {
-        NotificationHelper.cancelNotification(this, task.getId());
-        taskViewModel.delete(task);
-        Toast.makeText(this, getString(R.string.task_deleted), Toast.LENGTH_SHORT).show();
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete_task)
+                .setMessage(R.string.delete_task_confirmation)
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    NotificationHelper.cancelNotification(this, task.getId());
+                    taskViewModel.delete(task);
+                    Toast.makeText(this, getString(R.string.task_deleted), Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     @Override

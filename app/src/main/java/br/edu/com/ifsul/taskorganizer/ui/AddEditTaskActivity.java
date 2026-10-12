@@ -61,6 +61,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
     private CheckBox cbRemind;
     private CheckBox cbFinished;
     private Button btnSave;
+    private Button btnCancel;
 
     private TaskViewModel taskViewModel;
     private Validator validator;
@@ -84,6 +85,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
         cbRemind = findViewById(R.id.cbRemind);
         cbFinished = findViewById(R.id.cbFinished);
         btnSave = findViewById(R.id.btnSave);
+        btnCancel = findViewById(R.id.btnCancel);
 
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
@@ -110,6 +112,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
         btnSelectDateTime.setOnClickListener(v -> showDateTimePicker());
 
         btnSave.setOnClickListener(v -> validator.validate());
+        btnCancel.setOnClickListener(v -> finish());
     }
 
     private void setupSpinners() {
@@ -266,6 +269,8 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
         tilTitle.setError(null);
         tilDescription.setError(null);
 
+        boolean isFirstError = true;
+
         for (ValidationError error : errors) {
             View view = error.getView();
             String message = error.getCollatedErrorMessage();
@@ -274,10 +279,13 @@ public class AddEditTaskActivity extends AppCompatActivity implements Validator.
                 tilTitle.setError(message);
             } else if (view == etDescription) {
                 tilDescription.setError(message);
-            } else if (view instanceof Spinner) {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+
+            if (isFirstError) {
+                view.requestFocus();
+                isFirstError = false;
             }
         }
     }

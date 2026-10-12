@@ -7,6 +7,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -81,8 +83,11 @@ public class NotificationHelper {
         String title = task.getTitle() != null && !task.getTitle().trim().isEmpty() ? task.getTitle() : context.getString(R.string.task_reminder_title);
         String description = task.getDescription() != null && !task.getDescription().trim().isEmpty() ? task.getDescription() : context.getString(R.string.task_reminder_default_text);
 
+        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(largeIcon)
                 .setContentTitle(title)
                 .setContentText(description)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

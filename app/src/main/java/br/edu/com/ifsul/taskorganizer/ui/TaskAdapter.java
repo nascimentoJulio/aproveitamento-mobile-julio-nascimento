@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -68,6 +69,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         private final TextView tvDueDate;
         private final TextView tvPriority;
         private final TextView tvCategory;
+        private final TextView tvStatus;
         private final TextView tvRemind;
         private final ImageButton btnDelete;
 
@@ -79,6 +81,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             tvDueDate = itemView.findViewById(R.id.tvDueDate);
             tvPriority = itemView.findViewById(R.id.tvPriority);
             tvCategory = itemView.findViewById(R.id.tvCategory);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
             tvRemind = itemView.findViewById(R.id.tvRemind);
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }
@@ -98,10 +101,35 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
             if (task.getPriority() != null) {
                 tvPriority.setText(context.getString(R.string.priority_format, context.getString(task.getPriority().getDisplayNameResId())));
+                switch (task.getPriority()) {
+                    case HIGH:
+                        tvPriority.setTextColor(ContextCompat.getColor(context, R.color.priority_high_txt));
+                        tvPriority.setBackgroundResource(R.drawable.bg_priority_high);
+                        break;
+                    case MEDIUM:
+                        tvPriority.setTextColor(ContextCompat.getColor(context, R.color.priority_medium_txt));
+                        tvPriority.setBackgroundResource(R.drawable.bg_priority_medium);
+                        break;
+                    case LOW:
+                    default:
+                        tvPriority.setTextColor(ContextCompat.getColor(context, R.color.priority_low_txt));
+                        tvPriority.setBackgroundResource(R.drawable.bg_priority_low);
+                        break;
+                }
             }
 
             if (task.getCategory() != null) {
                 tvCategory.setText(context.getString(R.string.category_format, context.getString(task.getCategory().getDisplayNameResId())));
+            }
+
+            if (task.isFinished()) {
+                tvStatus.setText(R.string.status_completed);
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.priority_low_txt));
+                tvStatus.setBackgroundResource(R.drawable.bg_priority_low);
+            } else {
+                tvStatus.setText(R.string.status_pending);
+                tvStatus.setTextColor(ContextCompat.getColor(context, R.color.priority_medium_txt));
+                tvStatus.setBackgroundResource(R.drawable.bg_priority_medium);
             }
 
             if (task.isRemind()) {

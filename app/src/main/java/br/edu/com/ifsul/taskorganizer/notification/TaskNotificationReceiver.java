@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 
 import androidx.core.app.NotificationCompat;
@@ -35,8 +37,11 @@ public class TaskNotificationReceiver extends BroadcastReceiver {
         String defaultTitle = context.getString(R.string.task_reminder_title);
         String defaultText = context.getString(R.string.task_reminder_default_text);
 
+        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(largeIcon)
                 .setContentTitle(title != null && !title.isEmpty() ? title : defaultTitle)
                 .setContentText(description != null && !description.isEmpty() ? description : defaultText)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
